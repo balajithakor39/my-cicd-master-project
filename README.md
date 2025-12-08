@@ -8,3 +8,28 @@ devops-dual-cicd/
  ├── scripts/deploy.sh
  ├── screenshots/
  ├── README.md
+             ┌──────────────┐
+             │  Developer    │
+             └──────┬───────┘
+                    │ Push Code
+            ┌───────┴─────────┐
+            │ GitHub Repo      │
+            └──────┬──────────┘
+      ┌────────────┼──────────────┐
+      │             │              │
+      ▼             ▼              ▼
+GitHub Actions   Jenkins CI/CD   Webhook/Manual
+      │             │              │
+      └───────Build Docker Image──┘
+                    │
+                    ▼
+              DockerHub Repo
+                    │
+                    ▼
+          Deploy to AWS EC2 (Docker)
+                    │
+                    ▼
+          Zabbix Agent on EC2 (Monitoring)
+                    │
+                    ▼
+         Zabbix Server Dashboard + Alerts
