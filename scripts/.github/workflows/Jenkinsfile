@@ -1,0 +1,27 @@
+pipeline {
+  agent any
+  environment {
+    DOCKER_REPO = "yourdockerhub/cloud-security"
+    REMOTE_IP = "EC2_APP_IP"
+  }
+  stages {
+    stage('Checkout') { steps { checkout scm } }
+    stage('Build') { steps { sh 'mvn -B package -DskipTests' } }
+    stage('Docker Build') { steps { sh "docker build -t ${env.DOCKER_REPO}:latest ." } }
+    stage('Login & Push') {
+      steps {
+        withCredentials([usernamePassword(credentialsId: 'dockerhub-creds', usernameVariable: 'DH_USER', passwordVariable: 'DH_PASS')]) {
+          sh 'echo $DH_PASS | docker login -u $DH_USER --password-stdin'
+          sh "docker push ${env.DOCKER_REPO}:latest"
+        }
+      }
+    }
+    stage('Deploy') {
+      steps {
+        withCredentials([sshUserPrivateKey(credentialsId: 'ec2-ssh-key', keyFileVariable: 'SSH_KEY')]) {
+          sh "ssh -o StrictHostKeyChecking=no -i $SSH_KEY ubuntu@${env.REMOTE_IP} 'docker pull ${env.DOCKER_REPO}:latest && docker stop cloud-security || true && docker rm cloud-security || true && docker run -d --name cloud-security -p 80:8080 ${env.DOCKER_REPO}:latest'"
+        }
+      }
+    }
+  }
+}
