@@ -1,0 +1,23 @@
+my-cicd-master-project/
+ ├── app/
+ │    ├── src/
+ │    │    └── Main.java        (Simple Java Web App)
+ │    ├── pom.xml               (Maven build file)
+ │
+ ├── Dockerfile
+ ├── Jenkinsfile
+ ├── .github/
+ │     └── workflows/
+ │            └── cicd.yml     (GitHub Actions Pipeline)
+ │
+ ├── scripts/
+ │     └── deploy.sh           (Docker Deploy Script)
+ │
+ ├── monitoring/
+ │     └── zabbix-setup.md     (How to monitor app)
+ │
+ ├── firewall/
+ │     └── waf-rules.conf      (Advance Firewall/WAF Rules)
+ │
+ ├── README.md
+ └── .gitignore
